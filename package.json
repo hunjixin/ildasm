@@ -4,7 +4,8 @@
   "description": "MSIL VIEW",
   "main": "pub/js/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "webpack": "webpack --progress --colors"
   },
   "repository": "",
   "keywords": [
@@ -16,7 +17,8 @@
   "devDependencies": {
     "electron": "~1.6.2",
     "html-loader": "^0.4.5",
-    "webpack": "^3.3.0"
+    "webpack": "^3.3.0",
+    "webpack-dev-server": "^2.5.1"
   },
   "dependencies": {
     "autoprefixer": "^7.1.2",

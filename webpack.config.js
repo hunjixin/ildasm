@@ -1,6 +1,7 @@
 const htmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const path = require('path')
+const webpack=require('webpack')
 const autoprefixer = require('autoprefixer')
 
 // const ExtractCss = new ExtractTextPlugin('style/[name]_[hash:8].css')
@@ -14,7 +15,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'pub'),
-    publicPath: '/pub/',
+    publicPath: '',
     filename: 'js/[name].js'
   },
   module: {
@@ -24,7 +25,6 @@ module.exports = {
         use: [
           {loader: 'html-loader'}
         ]
-
       },
       {
         test: /\.css$/,
@@ -64,10 +64,16 @@ module.exports = {
       title: 'Ilasm',
       chunks: ['index']
     }),
-    new ExtractTextPlugin('style/[name]_[hash:8].css')
+    new ExtractTextPlugin('style/[name]_[hash:8].css'),
+    new webpack.DefinePlugin({
+      'process.env.NODE.ENV': 'development'
+    }),
+    new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
-    contentBase: __dirname + '/pub'
+    historyApiFallback: true,
+    hot: true,
+    inline: true
   },
   target: 'electron'
 }
