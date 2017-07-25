@@ -38,4 +38,3 @@ function createWindow () {
   emitManager=new EmitManager(mainWindow);
   mainWindow.on('closed', ()=>{ mainWindow = null})
 }
-

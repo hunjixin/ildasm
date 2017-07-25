@@ -69,7 +69,11 @@ module.exports = {
       title: 'Ilasm',
       chunks: ['index']
     }),
-    new ExtractTextPlugin('style/[name]_[hash:8].css')
+       new ExtractTextPlugin('style/[name]_[hash:8].css'),
+    new webpack.DefinePlugin({
+      'process.env.NODE.ENV': 'development'
+    }),
+    new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
     contentBase: __dirname + '/pub'

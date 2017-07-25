@@ -35,7 +35,6 @@ const cSet = new Set([
   new CommandItem('/output', 'check', '', '', '', false)
 ])
 
-
 class CommandItem {
   constructor (name, type, value, useFor, description, enable) {
     this.name = name
@@ -58,4 +57,4 @@ class CommandItem {
   }
 }
 
-module.exports.CommandSet=cSet;
+module.exports.CommandSet = cSet
