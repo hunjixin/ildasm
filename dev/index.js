@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import AssemblyView from './component/AssemblyView.jsx'
-import ClassTreeView from './component/ClassTreeView.jsx'
+import AssemblyView from './component/assemblyView.jsx'
+import ClassTreeView from './component/classTreeView.jsx'
 
 import Config from './config.js'
 
