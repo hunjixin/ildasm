@@ -1,6 +1,6 @@
 
 import events from 'events'
-
+import PEReader from './PEReader.js'
 class EmitManager
 {
     constructor(win)
@@ -18,6 +18,7 @@ class EmitManager
 
     _openFile(fileName){
         this.windows.setTitle(`${fileName}  IL DASM`)
+        var reader=new PEReader(fileName);
     }
 }
 export default EmitManager

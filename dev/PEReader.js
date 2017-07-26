@@ -3,92 +3,156 @@ import fs from 'fs'
 
 class DosHeader {
   constructor (buffer) {
-    this.e_magic = buffer.toString('ascii', 0, 16)
-    this.e_cblp = buffer.readUInt16BE()
-    this.e_cp = buffer.readUInt16BE()
-    this.e_crlc = buffer.readUInt16BE()
-    this.e_cparhdr = buffer.readUInt16BE()
-    this.e_minalloc = buffer.readUInt16BE()
-    this.e_maxalloc = buffer.readUInt16BE()
-    this.e_ss = buffer.readUInt16BE()
-    this.e_sp = buffer.readUInt16BE()
-    this.e_csum = buffer.readUInt16BE()
-    this.e_ip = buffer.readUInt16BE()
-    this.e_cs = buffer.readUInt16BE()
-    this.e_lfarlc = buffer.readUInt16BE()
-    this.e_ovno = buffer.readUInt16BE()
-    this.e_res = buffer.readUInt16BE()
-    this.e_oemic = buffer.readUInt16BE()
-    this.e_oemidnfo = buffer.readUInt16BE()
-    this.e_res2 = buffer.readUInt16BE()
-    this.e_lfanew = buffer.readUInt32BE()
-  }
-}
-
-class DosStub {
-  constructor (buffer, startIndex, endIndex) {
-    this.msg = buffer.toString('ascii', startIndex, endIndex)
+    this.offset = 0
+    this.e_magic = buffer.toString('ascii', 0, 2)
+    this.offset = this.offset + 2
+    this.e_cblp = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_cp = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_crlc = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_cparhdr = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_minalloc = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_maxalloc = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_ss = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_sp = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_csum = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_ip = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 16
+    this.e_cs = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_lfarlc = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_ovno = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_res = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_oemic = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_oemidnfo = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_res2 = buffer.readUInt16LE(this.offset)
+    this.offset = this.offset + 2
+    this.e_lfanew = buffer.readUInt32LE(this.offset)
+    this.offset = this.offset + 2
+    this.length =  this.offset
+    this.startOffset = this.offset
   }
 }
 
 class FileHeader {
-  constructor (buffer) {
-    this.macine = buffer.readUInt32BE()
-    this.numberOfSections = buffer.readUInt16BE()
-    this.timeDateStamp = buffer.readUInt32BE()
-    this.poUInterToSymbolTable = buffer.readUInt32BE()
-    this.numberOfSymbols = buffer.readUInt32BE()
-    this.sizeOfOptionHeader = buffer.readUInt32BE()
-    this.characteristics = buffer.readUInt32BE()
+  constructor (buffer, offset) {
+    let startOffset = offset
+    this.macine = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.numberOfSections = buffer.readUInt16LE(offset)
+    offset = offset + 2
+    this.timeDateStamp = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.poUInterToSymbolTable = buffer.readUInt32LE(offset)
+    offset = offset +4
+    this.numberOfSymbols = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.sizeOfOptionHeader = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.characteristics = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.length = offset - startOffset
+    this.startOffset = offset
   }
 }
 
 class OptionalHeader {
-  constructor (buffer) {
-    this.magic = buffer.readUInt16BE()
+  constructor (buffer, offset) {
+    let startOffset = offset
+    this.magic = buffer.readUInt16LE()
+    offset = offset + 2
     this.majorLinkerVersion = buffer.readUInt8()
+    offset = offset + 1
     this.minorLinkerVersion = buffer.readUInt8()
-    this.sizeOfCode = buffer.readUInt32BE()
-    this.sizeOfInitializedData = buffer.readUInt32BE()
-    this.sizeOfUninitializedData = buffer.readUInt32BE()
-    this.addressOfEntryPoUInt = buffer.readUInt32BE()
+    offset = offset + 1
+    this.sizeOfCode = buffer.readUInt32LE()
+    offset = offset + 4
+    this.sizeOfInitializedData = buffer.readUInt32LE()
+    offset = offset + 4
+    this.sizeOfUninitializedData = buffer.readUInt32LE()
+    offset = offset + 4
+    this.addressOfEntryPoUInt = buffer.readUInt32LE()
+    offset = offset + 4
 
-    this.baseOfCode = buffer.readUInt32BE()
-    this.baseOfData = buffer.readUInt32BE()
-    this.ImageBase = buffer.readUInt32BE()
-    this.sectionAlignment = buffer.readUInt32BE()
-    this.fileAlignment = buffer.readUInt32BE()
+    this.baseOfCode = buffer.readUInt32LE()
+    offset = offset + 4
+    this.baseOfData = buffer.readUInt32LE()
+    offset = offset + 4
+    this.ImageBase = buffer.readUInt32LE()
+    offset = offset + 4
+    this.sectionAlignment = buffer.readUInt32LE()
+    offset = offset + 4
+    this.fileAlignment = buffer.readUInt32LE()
+    offset = offset + 4
 
-    this.majorOperatingSystemVersion = buffer.readUInt16BE()
-    this.minorOpratingSystemVersion = buffer.readUInt16BE()
-    this.majorImageVersion = buffer.readUInt16BE()
-    this.minorImageVersion = buffer.readUInt16BE()
-    this.majorSubSystemVersion = buffer.readUInt16BE()
-    this.minorSubSystemVersion = buffer.readUInt16BE()
+    this.majorOperatingSystemVersion = buffer.readUInt16LE()
+    offset = offset + 2
+    this.minorOpratingSystemVersion = buffer.readUInt16LE()
+    offset = offset + 2
+    this.majorImageVersion = buffer.readUInt16LE()
+    offset = offset + 2
+    this.minorImageVersion = buffer.readUInt16LE()
+    offset = offset + 2
+    this.majorSubSystemVersion = buffer.readUInt16LE()
+    offset = offset + 2
+    this.minorSubSystemVersion = buffer.readUInt16LE()
+    offset = offset + 2
 
-    this.win32VersionValue = buffer.readUInt32BE()
-    this.sizeOfImage = buffer.readUInt32BE()
-    this.sizeOfHeaders = buffer.readUInt32BE()
-    this.checkSUm = buffer.readUInt32BE()
+    this.win32VersionValue = buffer.readUInt32LE()
+    offset = offset + 4
+    this.sizeOfImage = buffer.readUInt32LE()
+    offset = offset + 4
+    this.sizeOfHeaders = buffer.readUInt32LE()
+    offset = offset + 4
+    this.checkSUm = buffer.readUInt32LE()
+    offset = offset + 4
 
-    this.sumsystem = buffer.readUInt16BE()
-    this.dllCharacteristics = buffer.readUInt16BE()
+    this.sumsystem = buffer.readUInt16LE()
+    offset = offset + 2
+    this.dllCharacteristics = buffer.readUInt16LE()
+    offset = offset + 2
 
-    this.sizeOfStackReserve = buffer.readUInt32BE()
-    this.sizeOfStackCommit=buffer.readUInt32BE()
-    this,sizeOfHeapReserve=buffer.readUInt32BE()
-    this.sizeOfHeadpCommit = buffer.readUInt32BE()
-    this.loaderFlags = buffer.readUInt32BE()
-    this.numberOfRvaAndSizes = buffer.readUInt32BE()
-    this.dataDirectory = buffer.readUInt32BE()
+    this.sizeOfStackReserve = buffer.readUInt32LE()
+    offset = offset + 4
+    this.sizeOfStackCommit = buffer.readUInt32LE()
+    offset = offset + 4
+    this.sizeOfHeapReserve = buffer.readUInt32LE()
+    offset = offset + 4
+    this.sizeOfHeadpCommit = buffer.readUInt32LE()
+    offset = offset + 4
+    this.loaderFlags = buffer.readUInt32LE()
+    offset = offset + 4
+    this.numberOfRvaAndSizes = buffer.readUInt32LE()
+    offset = offset + 4
+    this.dataDirectory = buffer.readUInt32LE()
+    offset = offset + 4
+    this.length = offset - startOffset
+    this.startOffset = offset
   }
 }
 
 class PEHeader {
-  constructor (buffer) {
-    this.signature = buffer.readUInt32BE()
-    this.fileHeader = new FileHeader(buffer)
-    this.optionHeader=new OptionalHeader(buffer)
+  constructor (buffer, offset,stubLen) {
+    this.stub = buffer.toString('ascii', offset, stubLen)
+    this.signature = buffer.readUInt32LE(offset)
+    offset = offset + 32
+    this.fileHeader = new FileHeader(buffer, offset)
+    this.optionHeader = new OptionalHeader(buffer, offset)
+    this.length = 32 + this.fileHeader.length + this.optionHeader.length
+    this.startOffset = offset
   }
 }
 
@@ -96,8 +160,13 @@ class PEReader {
   constructor (filePath) {
     this.filePath = filePath
     this.buffer = fs.readFileSync(filePath)
+    this.dosHeader = new DosHeader(this.buffer)
+    var stubLen= this.dosHeader.length + this.dosHeader.offset/8
+    this.peHeader = new PEHeader(this.buffer, this.dosHeader.length,stubLen)
   }
 }
 
 export default PEReader
-module.exports.EmitManager = PEReader
+module.exports.PEReader = PEReader
+
+export { DosHeader, FileHeader, OptionalHeader, PEHeader, PEReader }

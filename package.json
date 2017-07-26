@@ -4,7 +4,7 @@
   "description": "MSIL VIEW",
   "main": "pub/js/main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron --debug-brk=5858 .",
     "webpack": "webpack --progress --colors"
   },
   "repository": "",
