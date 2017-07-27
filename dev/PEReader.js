@@ -28,7 +28,7 @@ class DosHeader {
     this.e_csum = buffer.readUInt16LE(offset)
     offset = offset + 2
     this.e_ip = buffer.readUInt16LE(offset)
-    offset = offset + 16
+    offset = offset + 2
     this.e_cs = buffer.readUInt16LE(offset)
     offset = offset + 2
     this.e_lfarlc = buffer.readUInt16LE(offset)
@@ -50,7 +50,7 @@ class DosHeader {
       offset = offset + 2
     }
     this.e_lfanew = buffer.readUInt32LE(offset)
-    offset = offset + 2
+    offset = offset + 4
 
     this.length = offset
   }
@@ -75,7 +75,7 @@ class COFFHeader {
     offset = offset + 2
     this.characteristics = buffer.readUInt16LE(offset)
     offset = offset + 2
-    this.length = offset - startOffset
+    this.length = offset - this.startOffset
   }
   isX64 () {
     return this.machine == 'x64'
@@ -172,139 +172,140 @@ class OptionalHeader {
     this.numberOfRvaAndSizes = buffer.readUInt32LE(offset)
     offset = offset + 4
 
-    this.dataDirectory = [ ]
-      offset = readDataDirectory(buffer, offset)
-
-      this.length = offset - this.startOffset
+    this.dataDirectory = []
+    offset = this.readDataDirectory(buffer, offset)
+    this.length = offset - this.startOffset
+  }
+  readDataDirectory (buffer, offset) {
+    var virtualAddress
+    var size = buffer
+    var innerReader = () => {
+      virtualAddress = buffer.readUInt32LE(offset)
+      offset = offset + 4
+      size = buffer.readUInt32LE(offset)
+      offset = offset + 4
     }
-    readDataDirectory (buffer, offset) {
-      var virtualAddress
-      var size = buffer
-      var innerReader = () => {
-        virtualAddress = buffer.readUInt32LE(offset)
-        offset = offset + 4
-        size = buffer.readUInt32LE(offset)
-        offset = offset + 4
-      }
-      // exportTable
-      innerReader()
-      this.dataDirectory.push({exportTable: virtualAddress,sizeOfExportTable: size})
-      // exportTable
-      innerReader()
-      this.dataDirectory.push({exportTable: virtualAddress,sizeOfExportTable: size})
-      // importTable
-      innerReader()
-      this.dataDirectory.push({importTable: virtualAddress,sizeOfImportTable: size})
-      // resourceTable
-      innerReader()
-      this.dataDirectory.push({resourceTable: virtualAddress,sizeOfResourceTable: size})
-      // exceptionTable
-      innerReader()
-      this.dataDirectory.push({exceptionTable: virtualAddress,sizeOfExceptionTable: size})
-      // CertificateTable
-      innerReader()
-      this.dataDirectory.push({certificateTable: virtualAddress,sizeOfCertificateTable: size})
-      // BaseRelocationTable
-      innerReader()
-      this.dataDirectory.push({baseRelocationTable: virtualAddress,sizeOfBaseRelocationTable: size})
-      // Debug
-      innerReader()
-      this.dataDirectory.push({debug: virtualAddress,sizeOfDebug: size})
-      // ArchitectureData
-      innerReader()
-      this.dataDirectory.push({architectureData: virtualAddress,sizeOfArchitectureData: size})
-      // GlobalPtr
-      innerReader()
-      this.dataDirectory.push({globalPtr: virtualAddress,sizeOfGlobalPtr: size})
-      // TLSTable
-      innerReader()
-      this.dataDirectory.push({TLSTable: virtualAddress,sizeOfTLSTable: size})
-      // loadConfigTable
-      innerReader()
-      this.dataDirectory.push({loadConfigTable: virtualAddress,sizeOfLoadConfigTable: size})
-      // BoundImport
-      innerReader()
-      this.dataDirectory.push({boundImport: virtualAddress,sizeOfBoundImport: size})
-      // ImportAddressTable
-      innerReader()
-      this.dataDirectory.push({importAddressTable: virtualAddress,sizeOfImportAddressTable: size})
-      // DelayImportDescriptor
-      innerReader()
-      this.dataDirectory.push({delayImportDescriptor: virtualAddress,sizeOfDelayImportDescriptor: size})
-      // CLRRuntimeHeader
-      innerReader()
-      this.dataDirectory.push({CLRRuntimeHeader: virtualAddress,sizeOfCLRRuntimeHeader: size})
-      return offset
+    // exportTable
+    innerReader()
+    this.dataDirectory.push({exportTable: virtualAddress,sizeOfExportTable: size})
+    // importTable
+    innerReader()
+    this.dataDirectory.push({importTable: virtualAddress,sizeOfImportTable: size})
+    // resourceTable
+    innerReader()
+    this.dataDirectory.push({resourceTable: virtualAddress,sizeOfResourceTable: size})
+    // exceptionTable
+    innerReader()
+    this.dataDirectory.push({exceptionTable: virtualAddress,sizeOfExceptionTable: size})
+    // CertificateTable
+    innerReader()
+    this.dataDirectory.push({certificateTable: virtualAddress,sizeOfCertificateTable: size})
+    // BaseRelocationTable
+    innerReader()
+    this.dataDirectory.push({baseRelocationTable: virtualAddress,sizeOfBaseRelocationTable: size})
+    // Debug
+    innerReader()
+    this.dataDirectory.push({debug: virtualAddress,sizeOfDebug: size})
+    // ArchitectureData
+    innerReader()
+    this.dataDirectory.push({architectureData: virtualAddress,sizeOfArchitectureData: size})
+    // GlobalPtr
+    innerReader()
+    this.dataDirectory.push({globalPtr: virtualAddress,sizeOfGlobalPtr: size})
+    // TLSTable
+    innerReader()
+    this.dataDirectory.push({TLSTable: virtualAddress,sizeOfTLSTable: size})
+    // loadConfigTable
+    innerReader()
+    this.dataDirectory.push({loadConfigTable: virtualAddress,sizeOfLoadConfigTable: size})
+    // BoundImport
+    innerReader()
+    this.dataDirectory.push({boundImport: virtualAddress,sizeOfBoundImport: size})
+    // ImportAddressTable
+    innerReader()
+    this.dataDirectory.push({importAddressTable: virtualAddress,sizeOfImportAddressTable: size})
+    // DelayImportDescriptor
+    innerReader()
+    this.dataDirectory.push({delayImportDescriptor: virtualAddress,sizeOfDelayImportDescriptor: size})
+    // CLRRuntimeHeader
+    innerReader()
+    this.dataDirectory.push({CLRRuntimeHeader: virtualAddress,sizeOfCLRRuntimeHeader: size})
+    // reserve
+    innerReader()
+    this.dataDirectory.push({reserve: virtualAddress,sizeOfreserve: size})
+    return offset
+  }
+}
+/**
+ * peHeader
+ */
+class PEHeader {
+  constructor (buffer, offset) {
+    this.startOffset = offset
+
+    this.signature = buffer.readUInt32LE(offset)
+    offset = offset + 4
+
+    this.coffHeader = new COFFHeader(buffer, offset)
+    offset = offset + this.coffHeader.length
+
+    this.optionHeader = new OptionalHeader(buffer, offset, this.coffHeader)
+    offset = offset + this.optionHeader.length
+
+    this.length = offset - this.startOffset
+  }
+}
+/**
+ * sectionHeader
+ */
+class SectionHeader {
+  constructor (buffer, offset) {
+    this.startOffset = offset
+    this.name = buffer.toString('ascii', offset, offset+8)
+    offset = offset + 8
+    this.misc = buffer.readUInt32LE() // PhysicalAddress;  VirtualSize
+    offset = offset + 4
+
+    this.virtualAddress = buffer.readUInt32LE()
+    offset = offset + 4
+    this.sizeOfRawData = buffer.readUInt32LE()
+    offset = offset + 4
+    this.pointerToRawData = buffer.readUInt32LE()
+    offset = offset + 4
+    this.pointerToRelocations = buffer.readUInt32LE()
+    offset = offset + 4
+    this.pointerToLinenumbers = buffer.readUInt32LE()
+    offset = offset + 4
+
+    this.numberOfRelocations = buffer.readUInt16LE()
+    offset = offset + 2
+    this.numberOfLinenumbers = buffer.readUInt16LE()
+    offset = offset + 2
+    this.characteristics = buffer.readUInt32LE()
+    offset = offset + 4
+    this.length = offset - this.startOffset
+  }
+}
+
+class PEReader {
+  constructor (filePath) {
+    var buffer = fs.readFileSync(filePath)
+    // header imformation
+    this.dosHeader = new DosHeader(buffer)
+    this.dosStub = buffer.toString('ascii', this.dosHeader.length, this.dosHeader.e_lfanew) // 64
+
+    this.peHeader = new PEHeader(buffer, this.dosHeader.e_lfanew)
+    this.sectionHeaders = []
+    var offset = this.peHeader.startOffset + this.peHeader.length
+    for (var i = 0;i < this.peHeader.coffHeader.numberOfSections;i++) {
+      var section = new SectionHeader(buffer, offset)
+      this.sectionHeaders.push(section)
+      offset = offset + section.length
     }
   }
-  /**
-   * peHeader
-   */
-  class PEHeader {
-    constructor (buffer, offset) {
-      this.startOffset = offset
+}
 
-      this.signature = buffer.readUInt32LE(offset)
-      offset = offset + 32
+export default PEReader
+module.exports.PEReader = PEReader
 
-      this.coffHeader = new COFFHeader(buffer, offset)
-      offset = offset + this.coffHeader.length
-
-      this.optionHeader = new OptionalHeader(buffer, offset, coffheader)
-      offset = offset + this.optionHeader.length
-
-      this.sectionHeader = new SectionHeader(buffer, offset)
-      offset = offset + this.sectionHeader.length
-
-      this.length = offset - this.startOffset
-    }
-  }
-  /**
-   * sectionHeader
-   */
-  class SectionHeader {
-    constructor (buffer, offset) {
-      this.startOffset = offset
-      this.name = buffer.toString('ascii', offset, 8)
-      offset = offset + 8
-      this.misc = buffer.readUInt32LE() // PhysicalAddress;  VirtualSize
-      offset = offset + 4
-
-      this.virtualAddress = buffer.readUInt32LE()
-      offset = offset + 4
-      this.sizeOfRawData = buffer.readUInt32LE()
-      offset = offset + 4
-      this.pointerToRawData = buffer.readUInt32LE()
-      offset = offset + 4
-      this.pointerToRelocations = buffer.readUInt32LE()
-      offset = offset + 4
-      this.pointerToLinenumbers = buffer.readUInt32LE()
-      offset = offset + 4
-
-      this.numberOfRelocations = buffer.readUInt16LE()
-      offset = offset + 2
-      this.numberOfLinenumbers = buffer.readUInt16LE()
-      offset = offset + 2
-      this.characteristics = buffer.readUInt32LE()
-      offset = offset + 4
-      this.length = offset - this.startOffset
-    }
-  }
-
-  class PEReader {
-    constructor (filePath) {
-      var buffer = fs.readFileSync(filePath)
-      // header imformationddd
-      this.dosHeader = new DosHeader(buffer)
-      var stubLen = this.dosHeader.length + this.dosHeader.offset / 8
-      this.dosStub = buffer.toString('ascii', this.dosHeader.length, stubLen)
-      this.peHeader = new PEHeader(buffer, stubLen)
-      this.sectionHeader = new SectionHeader(buffer, offset)
-    //
-    }
-  }
-
-  export default PEReader
-  module.exports.PEReader = PEReader
-
-  export { DosHeader, FileHeader, OptionalHeader, PEHeader, PEReader, SectionHeader }
+export { DosHeader, COFFHeader, OptionalHeader, PEHeader, PEReader, SectionHeader }
