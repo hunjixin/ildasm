@@ -29,6 +29,7 @@
     "babel-preset-react": "^6.24.1",
     "extract-text-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^2.29.0",
+    "rc-tree": "^1.7.0",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.1",
     "react-dom": "^15.6.1",

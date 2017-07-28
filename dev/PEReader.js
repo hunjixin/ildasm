@@ -261,7 +261,7 @@ class PEHeader {
 class SectionHeader {
   constructor (buffer, offset) {
     this.startOffset = offset
-    this.name = buffer.toString('ascii', offset, offset+8)
+    this.name = buffer.toString('ascii', offset, offset + 8)
     offset = offset + 8
     this.misc = buffer.readUInt32LE() // PhysicalAddress;  VirtualSize
     offset = offset + 4
@@ -286,26 +286,304 @@ class SectionHeader {
     this.length = offset - this.startOffset
   }
 }
+// export
 
-class PEReader {
-  constructor (filePath) {
-    var buffer = fs.readFileSync(filePath)
-    // header imformation
-    this.dosHeader = new DosHeader(buffer)
-    this.dosStub = buffer.toString('ascii', this.dosHeader.length, this.dosHeader.e_lfanew) // 64
+class ExportTable {
+  constructor (buffer, offset) {
+    this.startOffset = offset
+    this.characteristics = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.timeDataStamp = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.majorVersion = buffer.readUInt16LE(offset)
+    offset = offset + 2
+    this.minorVersion = buffer.readUInt16LE(offset)
+    offset = offset + 2
 
-    this.peHeader = new PEHeader(buffer, this.dosHeader.e_lfanew)
-    this.sectionHeaders = []
-    var offset = this.peHeader.startOffset + this.peHeader.length
-    for (var i = 0;i < this.peHeader.coffHeader.numberOfSections;i++) {
-      var section = new SectionHeader(buffer, offset)
-      this.sectionHeaders.push(section)
-      offset = offset + section.length
-    }
+    this.name = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.base = buffer.readUInt32LE(offset)
+    offset = offset + 4
+
+    this.numberOfFunctions = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.numberOfNames = buffer.readUInt32LE(offset)
+    offset = offset + 4
+
+    this.addressOfFunctions = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.addressOfNames = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.addressOfNameOrDinals = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.length = offset - this.startOffset
+  }
+}
+class ImportTable {
+  constructor (buffer, offset) {
+    this.startOffset = offset
+    this.originalFirstThunk = buffer.readUInt32LE(offset) // ImportByName
+    offset = offset + 4
+    this.timeDateStamp = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.forwarderChain = buffer.readUInt32LE(offset)
+    offset = offset + 4
+    this.name = buffer.readUInt32LE(offset)
+    offset = offset + 4
+
+    this.firstThunk = buffer.readUInt32LE(offset) // ImportByName
+    offset = offset + 4
+    this.length = offset - this.startOffset
   }
 }
 
-export default PEReader
-module.exports.PEReader = PEReader
+class ImportByName {
+  constructor (buffer, offset) {
+    this.startOffset = offset
+    this.hint = buffer.readUInt16LE(offset)
+    offset = offset + 2
+    this.name = buffer.toString('ascii', offset, 1)
+    offset = offset + 1
+    this.length = offset - this.startOffset
+  }
+}
 
-export { DosHeader, COFFHeader, OptionalHeader, PEHeader, PEReader, SectionHeader }
+class ResourceTable {
+  constructor (buffer, offset) {
+    this.startOffset = offset
+    this.charachteristics = buffer.readUInt32LE()
+    offset = offset + 4
+    this.timeDateStamp = buffer.readUInt32LE()
+    offset = offset + 4
+    this.majorVersion = buffer.readUInt16LE()
+    offset = offset + 2
+    this.minorVersion = buffer.readUInt16LE()
+    offset = offset + 2
+    this.numberOfNameEntries = buffer.readUInt16LE()
+    offset = offset + 2
+    this.numberOfIdEntries = buffer.readUInt16LE()
+    offset = offset + 2
+    this.nameEntries = [ ]
+      for (var i = 0;i < this.numberOfNameEntries;i++) {
+        var entry = new resourceEntry(buffer, offset)
+        offset = offset + entry.length
+        this.nameEntries.push(entry)
+      }
+      this.idEntries = [ ]
+        for (var i = 0;i < this.numberOfIdEntries;i++) {
+          var entry = new resourceEntry(buffer, offset)
+          offset = offset + entry.length
+          this.idEntries.push(entry)
+        }
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class resourceEntry {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+        this.namedId = buffer.readUInt32LE()
+        offset = offset + 4
+        this.data = buffer.readUInt32LE()
+        offset = offset + 4
+        this.length = offset - this.startOffset
+
+        this.dataDetail = new resourceDataEntry(buffer, this.data)
+      }
+    }
+
+    class resourceDataEntry {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+        this.data = buffer.readUInt32LE()
+        offset = offset + 4
+        this.size = buffer.readUInt32LE()
+        offset = offset + 4
+        this.codePage = buffer.readUInt32LE()
+        offset = offset + 4
+        this.reserved = buffer.readUInt32LE()
+        offset = offset + 4
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class ExceptionTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+        this.pData = buffer.readUInt32LE(offset)
+        offset = offset + 4
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class SecurityTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class BaserelocTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class DebugTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+        this.characteristics = buffer.readUInt32LE(offset)
+        offset = offset + 4
+        this.timeDataStamp = buffer.readUInt32LE(offset)
+        offset = offset + 4
+        this.majorVersion = buffer.readUInt16LE(offset)
+        offset = offset + 2
+        this.minorVersion = buffer.readUInt16LE(offset)
+        offset = offset + 2
+
+        this.type = buffer.readUInt32LE(offset)
+        offset = offset + 4
+        this.sizeOfData = buffer.readUInt32LE(offset)
+        offset = offset + 4
+
+        this.addressOfRawData = buffer.readUInt32LE(offset)
+        offset = offset + 4
+        this.pointerToRawData = buffer.readUInt32LE(offset)
+        offset = offset + 4
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class ArchitectureTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+    class GlobalptrTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class TLSTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class LoadConfigTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class BoundImportTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class IatTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class DelayImportTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class ComDescriptionTable {
+      constructor (buffer, offset) {
+        this.startOffset = offset
+
+        this.length = offset - this.startOffset
+      }
+    }
+
+    class PEReader {
+      constructor (filePath) {
+        var buffer = fs.readFileSync(filePath)
+        // header imformation
+        this.dosHeader = new DosHeader(buffer)
+        this.dosStub = buffer.toString('ascii', this.dosHeader.length, this.dosHeader.e_lfanew) // 64
+
+        this.peHeader = new PEHeader(buffer, this.dosHeader.e_lfanew)
+        this.sectionHeaders = []
+        var offset = this.peHeader.startOffset + this.peHeader.length
+        for (var i = 0;i < this.peHeader.coffHeader.numberOfSections;i++) {
+          var section = new SectionHeader(buffer, offset)
+          this.sectionHeaders.push(section)
+          offset = offset + section.length
+        }
+        // export
+        if (this.peHeader.optionHeader.dataDirectory.exportTable != 0)
+          this.exportTable = new ExportTable(buffer, this.peHeader.optionHeader.dataDirectory.exportTable)
+        // import
+        if (this.peHeader.optionHeader.dataDirectory.importTable != 0)
+          this.importTable = new ImportTable(buffer, this.peHeader.optionHeader.dataDirectory.importTable)
+        // resource
+        if (this.peHeader.optionHeader.dataDirectory.resourceTable != 0)
+          this.resourceTable = new ResourceTable(buffer, this.peHeader.optionHeader.dataDirectory.resourceTable)
+        // exception
+        if (this.peHeader.optionHeader.dataDirectory.exceptionTable != 0)
+          this.exceptionTable = new ExceptionTable(buffer, this.peHeader.optionHeader.dataDirectory.exceptionTable)
+        // security
+        if (this.peHeader.optionHeader.dataDirectory.certificateTable != 0)
+          this.certificateTable = new SecurityTable(buffer, this.peHeader.optionHeader.dataDirectory.certificateTable)
+        // baserloc
+        if (this.peHeader.optionHeader.dataDirectory.resourceTable != 0)
+          this.resourceTable = new ResourceTable(buffer, this.peHeader.optionHeader.dataDirectory.resourceTable)
+        // debug
+        if (this.peHeader.optionHeader.dataDirectory.debugTable != 0)
+          this.debugTable = new DebugTable(buffer, this.peHeader.optionHeader.dataDirectory.debugTable)
+        // architecture
+        if (this.peHeader.optionHeader.dataDirectory.architectureData != 0)
+          this.architectureDataTable = new ArchitectureTable(buffer, this.peHeader.optionHeader.dataDirectory.architectureData)
+        // globalptr
+        if (this.peHeader.optionHeader.dataDirectory.globalPtr != 0)
+          this.globalPtr = new GlobalptrTable(buffer, this.peHeader.optionHeader.dataDirectory.globalPtr)
+        // tls
+        if (this.peHeader.optionHeader.dataDirectory.TLSTable != 0)
+          this.TLSTable = new TLSTable(buffer, this.peHeader.optionHeader.dataDirectory.TLSTable)
+        // load_config
+        if (this.peHeader.optionHeader.dataDirectory.loadConfigTable != 0)
+          this.loadConfigTable = new LoadConfigTable(buffer, this.peHeader.optionHeader.dataDirectory.loadConfigTable)
+        // bound_import
+        if (this.peHeader.optionHeader.dataDirectory.boundImport != 0)
+          this.boundImportTable = new BoundImportTable(buffer, this.peHeader.optionHeader.dataDirectory.boundImport)
+        // iat
+        if (this.peHeader.optionHeader.dataDirectory.importAddressTable != 0)
+          this.importAddressTable = new IatTable(buffer, this.peHeader.optionHeader.dataDirectory.importAddressTable)
+        // delatimport
+        if (this.peHeader.optionHeader.dataDirectory.delayImportDescriptor != 0)
+          this.delayImportTable = new DelayImportTable(buffer, this.peHeader.optionHeader.dataDirectory.delayImportDescriptor)
+        // comdescriptor
+        if (this.peHeader.optionHeader.dataDirectory.CLRRuntimeHeader != 0)
+          this.CLRRuntimeHeader = new ComDescriptionTable(buffer, this.peHeader.optionHeader.dataDirectory.CLRRuntimeHeader)
+      }
+    }
+
+    export default PEReader
+    module.exports.PEReader = PEReader
+
+    export { DosHeader, COFFHeader, OptionalHeader, PEHeader, PEReader, SectionHeader }

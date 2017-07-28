@@ -1,8 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import AssemblyView from './component/assemblyView.jsx'
-import ClassTreeView from './component/classTreeView.jsx'
+import AssemblyView from './component/AssemblyView.jsx'
+import ClassTreeView from './component/ClassTreeView.jsx'
+import PeView from './component/PeView.jsx'
 
 import Config from './config.js'
 
@@ -15,8 +16,9 @@ class CodeView extends React.Component {
   render () {
     return (
       <div>
-        <AssemblyView height={this.props.Config.height*0.8} content='dssssssssssssss' />
-        <ClassTreeView height={this.props.Config.height*0.2} content='gggggggggggggggg' />
+ {/*     <AssemblyView height={this.props.Config.height*0.8} content='dssssssssssssss' />
+      <ClassTreeView height={this.props.Config.height*0.2} content='gggggggggggggggg' />*/}
+       <PeView />
       </div>
     )
   }
