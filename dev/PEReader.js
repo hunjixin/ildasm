@@ -521,7 +521,7 @@ class ResourceTable {
     }
 
     class PEReader {
-      constructor (filePath) {
+        parserFile (filePath) {
         var buffer = fs.readFileSync(filePath)
         // header imformation
         this.dosHeader = new DosHeader(buffer)

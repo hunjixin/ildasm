@@ -1,25 +1,28 @@
-
 import events from 'events'
-import PEReader from './PEReader.js'
-class EmitManager
-{
-    constructor(win)
-    {
-       this.emitter = new events.EventEmitter();
-       this.windows=win;
+class EmitManager {
 
-       this.emitter.on('openFile', (finename)=>this._openFile(finename))
-    }
+  constructor () {
+    this.emitter = new events.EventEmitter()
+  }
 
-    Trigger(eventName,...args)
-    {
-        this.emitter.emit('openFile', ...args)
-    }
+  BindMenuEvent (win) {
+    this.windows = win
+    this.emitter.on('openFile', (path) => {this._openFile(path)})
+  }
 
-    _openFile(fileName){
-        this.windows.setTitle(`${fileName}  IL DASM`)
-        var reader=new PEReader(fileName);
-    }
+  Trigger (eventName, ...args) {
+    this.emitter.emit(eventName, ...args)
+  }
+
+  _openFile (fileName) {
+    this.windows.setTitle(`${fileName}  IL DASM`)
+    this.windows.webContents.send('readyParser', fileName);
+  }
+  
+  AddRenderListenner(eventName,callback)
+  {
+    require('electron').ipcRenderer.on(eventName, callback);
+  }
 }
 export default EmitManager
 module.exports.EmitManager = EmitManager

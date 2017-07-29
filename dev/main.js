@@ -3,15 +3,12 @@ import path from 'path'
 import url from 'url'
 import {CreateMenu} from './MenuTemplate.js'
 import Config from './config.js'
-import {EmitManager} from './emitManager.js'
 
 let mainWindow
-let emitManager
-
 
 app.on('ready', ()=> {
   createWindow()
-  var menu = Menu.buildFromTemplate(CreateMenu(emitManager))
+  var menu = Menu.buildFromTemplate(CreateMenu(Config))
   Menu.setApplicationMenu(menu)
 })
 
@@ -35,6 +32,6 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   }))
-  emitManager=new EmitManager(mainWindow);
+  Config.emitManager.BindMenuEvent(mainWindow)
   mainWindow.on('closed', ()=>{ mainWindow = null})
 }

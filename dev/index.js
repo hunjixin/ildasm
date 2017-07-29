@@ -11,14 +11,14 @@ class CodeView extends React.Component {
 
    constructor(props) {
        super(props)
-       // this.props.height=props.Config.height*0.8
+       //this.props.height=props.Config.height*0.8
     }
   render () {
     return (
       <div>
  {/*     <AssemblyView height={this.props.Config.height*0.8} content='dssssssssssssss' />
       <ClassTreeView height={this.props.Config.height*0.2} content='gggggggggggggggg' />*/}
-       <PeView />
+       <PeView Config={this.props.Config}/>
       </div>
     )
   }

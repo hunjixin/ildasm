@@ -1,6 +1,6 @@
 const {dialog} = require('electron')
 
-function CreateMenu (emitterMnager) {
+function CreateMenu (Config) {
   return [
     {
       label: '文件',
@@ -12,7 +12,7 @@ function CreateMenu (emitterMnager) {
             properties: ['openFile']
           })
 
-          if (filepath && filepath.length == 1)  emitterMnager.Trigger('openFile', filepath[0])
+          if (filepath && filepath.length == 1)  Config.emitManager.Trigger('openFile',filepath[0])
       }},
         {label: 'dump'},
         {label: 'exit'}

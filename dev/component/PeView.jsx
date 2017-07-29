@@ -2,93 +2,105 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 var PropTypes = require('react').PropTypes
 import Tree, { TreeNode } from 'rc-tree'
+import PEReader from '../PEReader.js'
 import 'rc-tree/assets/index.css'
+
 class PeView extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
-    this.propTypes = {       keys: PropTypes.array
-    }
-    this.treeData=[]
+    this.state = { treeData: [] }
+    this.props.Config.emitManager.AddRenderListenner("readyParser", (event, path) => {
+      var reader = new PEReader()
+      reader.parserFile(path)
+      this.setTreeData(reader)
+    })
+
+    console.log(global.emitter)
+    console.log(this.props.Config.emitManager)
   }
 
-  componentDidMount () {
-    setTimeout(() => {
-      this.setState({
-        treeData: [
-          { name: 'pNode 01', key: '0-0' },
-          { name: 'pNode 02', key: '0-1' },
-          { name: 'pNode 03', key: '0-2', isLeaf: true }
-        ]
+  setTreeData(reader) {
+    var treeData = []
+    var increaseCengji = (a) => {
+      var c = a.split('-')
+      c[c.length - 1] = 1 + parseInt(c[c.length - 1])
+      return c.join('-')
+    }
+    var getChildren = (obj, deep) => {
+      var children = []
+      Object.keys(obj).forEach((item, index, array) => {
+        if (obj[item] instanceof Array) {
+          var cobj = obj[item]
+          cobj.forEach((cItem, cIndex, childAarray) => {
+            deep = increaseCengji(deep)
+            if (cobj[cItem] instanceof Object) {
+              children.push({ name: item + "[" + cIndex + "]", key: deep, children: getChildren(cobj[cItem], deep + '-0'), isLeaf: false })
+            } else {
+              children.push({ name: item + "[" + cIndex + "]", key: deep, value: cobj[cItem], isLeaf: true })
+            }
+          })
+
+        } else if (obj[item] instanceof Object) {
+          deep = increaseCengji(deep)
+          children.push({ name: item, key: deep, children: getChildren(obj[item], deep + '-0'), isLeaf: false })
+        } else {
+          deep = increaseCengji(deep)
+          children.push({ name: item, value: obj[item], key: deep, isLeaf: true })
+        }
       })
-    }, 100)
+      return children
+    }
+    treeData[0] = {
+      name: 'dosHeader', key: '0-0', children: getChildren(reader.dosHeader, '0-0-0'), isLeaf: false
+    }
+    treeData[1] = {
+      name: 'dosStub', key: '0-1', value: reader.dosStub, isLeaf: true
+    }
+    treeData[2] = {
+      name: 'peHeader', key: '0-2', value: reader.peHeader, children: getChildren(reader.peHeader, '0-2-0'), isLeaf: false
+    }
+    treeData[3] = {
+      name: 'sectionHeaders', key: '0-3', children: getChildren(reader.sectionHeaders, '0-3-0'), isLeaf: false
+    }
+
+    // export
+    if (reader.peHeader.optionHeader.dataDirectory.exportTable != 0) {
+      treeData[4] = {
+        name: 'exportTable', key: '0-5', children: getChildren(reader.exportTable, '0-5-0'), isLeaf: false
+      }
+    }
+    // import
+    if (reader.peHeader.optionHeader.dataDirectory.importTable != 0) {
+      treeData[4] = {
+        name: 'importTable', key: '0-6', children: getChildren(reader.importTable, '0-6-0'), isLeaf: false
+      }
+    }
+    // resource
+    if (reader.peHeader.optionHeader.dataDirectory.resourceTable != 0) {
+      treeData[4] = {
+        name: 'resourceTable', key: '0-7', children: getChildren(reader.resourceTable, '0-7-0'), isLeaf: false
+      }
+    }
+
+
+    this.setState({ treeData: treeData })
   }
-  onSelect (info) {
+  onSelect(info) {
     console.log('selected', info)
   }
-  onLoadData (treeNode) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const treeData = [...this.state.treeData]
-        getNewTreeData(treeData, treeNode.props.eventKey, generateTreeNodes(treeNode), 2)
-        this.setState({ treeData})
-        resolve()
-      }, 500)
-    })
-  }
-  generateTreeNodes (treeNode) {
-    const arr = []
-    const key = treeNode.props.eventKey
-    for (let i = 0; i < 3; i++) {
-      arr.push({ name: `leaf ${key}-${i}`, key: `${key}-${i}` })
-    }
-    return arr
-  }
-  setLeaf (treeData, curKey, level) {
-    const loopLeaf = (data, lev) => {
-      const l = lev - 1
-      data.forEach((item) => {
-        if ((item.key.length > curKey.length) ? item.key.indexOf(curKey) !== 0 :
-            curKey.indexOf(item.key) !== 0) {
-          return
-        }
-        if (item.children) {
-          loopLeaf(item.children, l)
-        } else if (l < 1) {
-          item.isLeaf = true
-        }
-      })
-    }
-    loopLeaf(treeData, level + 1)
-  }
-
-  getNewTreeData (treeData, curKey, child, level) {
-    const loop = (data) => {
-      if (level < 1 || curKey.length - 3 > level * 2) return
-      data.forEach((item) => {
-        if (curKey.indexOf(item.key) === 0) {
-          if (item.children) {
-            loop(item.children)
-          } else {
-            item.children = child
-          }
-        }
-      })
-    }
-    loop(treeData)
-    setLeaf(treeData, curKey, level)
-  }
-  render () {
+  render() {
     const loop = (data) => {
       return data.map((item) => {
         if (item.children) {
-          return <TreeNode title={item.name} key={item.key}>
-                   {loop(item.children)}
-                 </TreeNode>
+          return <TreeNode title={item.name} key={item.key}  value={item.value}>
+            {loop(item.children)}
+          </TreeNode>
         }
         return (
           <TreeNode
             title={item.name}
             key={item.key}
+            value={item.value}
             isLeaf={item.isLeaf}
             disabled={item.key === '0-0-0'} />
         )
@@ -97,8 +109,7 @@ class PeView extends React.Component {
     const treeNodes = loop(this.state.treeData)
     return (
       <div>
-        <h2>dynamic render</h2>
-        <Tree onSelect={this.onSelect} loadData={this.onLoadData}>
+        <Tree onSelect={this.onSelect} >
           {treeNodes}
         </Tree>
       </div>
