@@ -3,7 +3,7 @@ import {EmitManager} from './emitManager.js'
 
 const Config =
 {
-  width: 800,
+  width: 1000,
   height: 600,
   title: 'ildasm',
   icon: 'images/sd.icon',

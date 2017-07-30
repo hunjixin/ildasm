@@ -22,6 +22,7 @@
     "webpack-dev-server": "^2.5.1"
   },
   "dependencies": {
+    "@kadira/react-split-pane": "^1.4.7",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
@@ -33,8 +34,11 @@
     "postcss-loader": "^2.0.6",
     "rc-tree": "^1.7.0",
     "react": "^15.6.1",
+    "react-addons-perf": "^15.4.2",
     "react-bootstrap": "^0.31.1",
+    "react-data-grid": "^2.0.54",
     "react-dom": "^15.6.1",
+    "react-free-scrollbar": "^0.2.5",
     "style-loader": "^0.18.2",
     "text-loader": "0.0.1",
     "transform-runtime": "0.0.0"
