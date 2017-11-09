@@ -1,4 +1,3 @@
-import {PEReader} from './PEReader.js'
 import {EmitManager} from './emitManager.js'
 
 const Config =

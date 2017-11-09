@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 var PropTypes = require('react').PropTypes
 import Tree, { TreeNode } from 'rc-tree'
-import PEReader from '../PEReader.js'
+import {PEReader} from '../struct/PEReader.js'
 import 'rc-tree/assets/index.css'
 import SplitPane from '@kadira/react-split-pane'
 import ReactDataGrid from 'react-data-grid'
