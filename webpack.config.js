@@ -10,12 +10,12 @@ const autoprefixer = require('autoprefixer')
 module.exports = {
   devtool: 'source-map',
   entry: {
-    main: './dev/main.js',
-    index: './dev/index.js'
+    main: './src/main.js',
+    index: './src/index.js'
   },
   output: {
     path: path.resolve(__dirname, 'pub'),
-    publicPath: '/pub/',
+    publicPath: '/dist/',
     filename: 'js/[name].js'
   },
   module: {
