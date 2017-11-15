@@ -1,5 +1,7 @@
 class DebugTable {
-  constructor(buffer, offset) {
+  constructor(buffer, pEntity) {
+    if(pEntity.sizeOfDebug==0)return;
+    var offset=pEntity.debug;
     this.startOffset = offset;
     this.characteristics = buffer.readUInt32LE(offset);
     offset = offset + 4;

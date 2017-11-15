@@ -1,5 +1,7 @@
 class ExportTable {
-    constructor(buffer, offset) {
+    constructor(reader,buffer, pEntity) {
+        if(pEntity.sizeOfExportTable==0)return;
+        var offset=reader.peHeader.optionHeader.RVAToOffset(pEntity.exportTable,reader.sectionHeaders).foa ;
         this.startOffset = offset;
         this.characteristics = buffer.readUInt32LE(offset);
         offset = offset + 4;

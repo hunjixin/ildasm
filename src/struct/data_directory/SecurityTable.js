@@ -1,5 +1,7 @@
 class SecurityTable {
-  constructor(buffer, offset) {
+  constructor(buffer, pEntity) {
+    if(pEntity.sizeOfCertificateTable==0)return;
+    var    offset=pEntity.certificateTable;
     this.startOffset = offset;
 
     this.length = offset - this.startOffset;

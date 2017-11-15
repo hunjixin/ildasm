@@ -36,7 +36,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "359eae29de1f3a6dc22f"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "ab2dcc363a5c37e6079c"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -675,7 +675,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/pub/";
+/******/ 	__webpack_require__.p = "/dist/";
 /******/
 /******/ 	// __webpack_hash__
 /******/ 	__webpack_require__.h = function() { return hotCurrentHash; };
@@ -734,7 +734,7 @@ function createWindow() {
   mainWindow = new _electron.BrowserWindow(_config2.default);
   mainWindow.webContents.openDevTools();
   mainWindow.loadURL(_url2.default.format({
-    pathname: "/pub/index.html",
+    pathname: "/dist/index.html",
     protocol: 'file:',
     slashes: true
   }));

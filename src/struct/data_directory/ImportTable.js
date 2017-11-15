@@ -1,5 +1,7 @@
 class ImportTable {
-    constructor(buffer, offset) {
+    constructor(reader,buffer, pEntity) {
+        if(pEntity.sizeOfImportTable==0)return;
+        var offset=reader.peHeader.optionHeader.RVAToOffset(pEntity.importTable,reader.sectionHeaders).foa ;
         this.startOffset = offset;
         this.originalFirstThunk = buffer.readUInt32LE(offset); // ImportByName
         offset = offset + 4;

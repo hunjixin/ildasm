@@ -2,7 +2,9 @@
  * optionalHeader
  */
 class OptionalHeader {
-    constructor(buffer, offset, coffheader) {
+    constructor(buffer, offset, coffheader, dosHeader) {
+        this.coffheader = coffheader;
+        this.dosHeader = dosHeader;
         this.startOffset = offset;
         this.signature = buffer.readUInt16LE(offset);
         offset = offset + 2;
@@ -92,7 +94,33 @@ class OptionalHeader {
         this.dataDirectory = [];
         offset = this.readDataDirectory(buffer, offset);
         this.length = offset - this.startOffset;
+
+
     }
+    RVAToOffset(dwRva, sections) {
+        //区段数  
+        var dwSectionCount = this.coffheader.numberOfSections;
+        //内存对齐大小  
+        var dwAlignment = this.sectionAlignment;
+        for (var i = 0; i < dwSectionCount; ++i) {
+            var dwBegin = sections[i].virtualAddress;
+            if (i == 0 && dwRva < dwBegin) {
+                return {
+                    foa: dwRva,
+                    section: 0
+                };
+            }
+            var dwBlockCount = sections[i].sizeOfRawData / dwAlignment;
+            dwBlockCount += sections[i].sizeOfRawData % dwAlignment ? 1 : 0;
+            if (dwRva >= dwBegin && dwRva < dwBegin + dwBlockCount * dwAlignment) {
+                return {
+                    foa: sections[i].pointerToRawData + dwRva - dwBegin,
+                    section: i
+                };
+            }
+        }
+    }
+
     readDataDirectory(buffer, offset) {
         var virtualAddress;
         var size = buffer;
@@ -189,7 +217,7 @@ class OptionalHeader {
         // CLRRuntimeHeader
         innerReader();
         this.dataDirectory.push({
-            CLRRuntimeHeader: virtualAddress,
+            CLRuntimeHeader: virtualAddress,
             sizeOfCLRRuntimeHeader: size
         });
         // reserve

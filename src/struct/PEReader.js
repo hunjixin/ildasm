@@ -19,7 +19,7 @@ class PEReader {
     this.dosHeader = new DosHeader(buffer);
     this.dosStub = buffer.toString('ascii', this.dosHeader.length, this.dosHeader.e_lfanew); // 64
 
-    this.peHeader = new PEHeader(buffer, this.dosHeader.e_lfanew);
+    this.peHeader = new PEHeader(buffer, this.dosHeader);
     this.sectionHeaders = []
     var offset = this.peHeader.startOffset + this.peHeader.length;
     for (var i = 0; i < this.peHeader.coffHeader.numberOfSections; i++) {
@@ -29,49 +29,49 @@ class PEReader {
     }
     // export
     if (this.peHeader.optionHeader.dataDirectory.exportTable != 0)
-      this.exportTable = new ExportTable(buffer, this.peHeader.optionHeader.dataDirectory.exportTable);
+      this.exportTable = new ExportTable(this,buffer, this.peHeader.optionHeader.dataDirectory[0]);
     // import
     if (this.peHeader.optionHeader.dataDirectory.importTable != 0)
-      this.importTable = new ImportTable(buffer, this.peHeader.optionHeader.dataDirectory.importTable);
+      this.importTable = new ImportTable(this,buffer, this.peHeader.optionHeader.dataDirectory[1]);
     // resource
     if (this.peHeader.optionHeader.dataDirectory.resourceTable != 0)
-      this.resourceTable = new ResourceTable(buffer, this.peHeader.optionHeader.dataDirectory.resourceTable);
+      this.resourceTable = new ResourceTable(this,buffer, this.peHeader.optionHeader.dataDirectory[2]);
     // exception
     if (this.peHeader.optionHeader.dataDirectory.exceptionTable != 0)
-      this.exceptionTable = new ExceptionTable(buffer, this.peHeader.optionHeader.dataDirectory.exceptionTable);
+      this.exceptionTable = new ExceptionTable(this,buffer, this.peHeader.optionHeader.dataDirectory[3]);
     // security
     if (this.peHeader.optionHeader.dataDirectory.certificateTable != 0)
-      this.certificateTable = new SecurityTable(buffer, this.peHeader.optionHeader.dataDirectory.certificateTable);
+      this.certificateTable = new SecurityTable(this,buffer, this.peHeader.optionHeader.dataDirectory[4]);
     // baserloc
     if (this.peHeader.optionHeader.dataDirectory.baserloc != 0)
-      this.BaserelocTable = new BaserelocTable(buffer, this.peHeader.optionHeader.dataDirectory.resourceTable);
+      this.BaserelocTable = new BaserelocTable(this,buffer, this.peHeader.optionHeader.dataDirectory[5]);
     // debug
     if (this.peHeader.optionHeader.dataDirectory.debugTable != 0)
-      this.debugTable = new DebugTable(buffer, this.peHeader.optionHeader.dataDirectory.debugTable);
+      this.debugTable = new DebugTable(this,buffer, this.peHeader.optionHeader.dataDirectory[6]);
     // architecture
     if (this.peHeader.optionHeader.dataDirectory.architectureData != 0)
-      this.architectureDataTable = new ArchitectureTable(buffer, this.peHeader.optionHeader.dataDirectory.architectureData);
+      this.architectureDataTable = new ArchitectureTable(this,buffer, this.peHeader.optionHeader.dataDirectory[7]);
     // globalptr
     if (this.peHeader.optionHeader.dataDirectory.globalPtr != 0)
-      this.globalPtr = new GlobalptrTable(buffer, this.peHeader.optionHeader.dataDirectory.globalPtr);
+      this.globalPtr = new GlobalptrTable(this,buffer, this.peHeader.optionHeader.dataDirectory[8]);
     // tls
     if (this.peHeader.optionHeader.dataDirectory.TLSTable != 0)
-      this.TLSTable = new TLSTable(buffer, this.peHeader.optionHeader.dataDirectory.TLSTable);
+      this.TLSTable = new TLSTable(this,buffer, this.peHeader.optionHeader.dataDirectory[9]);
     // load_config
     if (this.peHeader.optionHeader.dataDirectory.loadConfigTable != 0)
-      this.loadConfigTable = new LoadConfigTable(buffer, this.peHeader.optionHeader.dataDirectory.loadConfigTable);
+      this.loadConfigTable = new LoadConfigTable(this,buffer, this.peHeader.optionHeader.dataDirectory[10]);
     // bound_import
     if (this.peHeader.optionHeader.dataDirectory.boundImport != 0)
-      this.boundImportTable = new BoundImportTable(buffer, this.peHeader.optionHeader.dataDirectory.boundImport);
+      this.boundImportTable = new BoundImportTable(this,buffer, this.peHeader.optionHeader.dataDirectory[11]);
     // iat
     if (this.peHeader.optionHeader.dataDirectory.importAddressTable != 0)
-      this.importAddressTable = new IatTable(buffer, this.peHeader.optionHeader.dataDirectory.importAddressTable);
+      this.importAddressTable = new IatTable(this,buffer, this.peHeader.optionHeader.dataDirectory[12]);
     // delatimport
     if (this.peHeader.optionHeader.dataDirectory.delayImportDescriptor != 0)
-      this.delayImportTable = new DelayImportTable(buffer, this.peHeader.optionHeader.dataDirectory.delayImportDescriptor);
+      this.delayImportTable = new DelayImportTable(this,buffer, this.peHeader.optionHeader.dataDirectory[13]);
     // comdescriptor
     if (this.peHeader.optionHeader.dataDirectory.CLRRuntimeHeader != 0)
-      this.CLRRuntimeHeader = new ComDescriptionTable(buffer, this.peHeader.optionHeader.dataDirectory.CLRRuntimeHeader);
+      this.CLRRuntimeHeader = new ComDescriptionTable(this,buffer, this.peHeader.optionHeader.dataDirectory[14]);
   }
 }
 

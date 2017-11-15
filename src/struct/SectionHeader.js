@@ -8,25 +8,25 @@ class SectionHeader {
         this.startOffset = offset;
         this.name = buffer.toString('ascii', offset, offset + 8);
         offset = offset + 8;
-        this.misc = buffer.readUInt32LE(); // PhysicalAddress;  VirtualSize
+        this.misc = buffer.readUInt32LE(offset); // PhysicalAddress;  VirtualSize
         offset = offset + 4;
 
-        this.virtualAddress = buffer.readUInt32LE();
+        this.virtualAddress = buffer.readUInt32LE(offset);
         offset = offset + 4;
-        this.sizeOfRawData = buffer.readUInt32LE();
+        this.sizeOfRawData = buffer.readUInt32LE(offset);
         offset = offset + 4;
-        this.pointerToRawData = buffer.readUInt32LE();
+        this.pointerToRawData = buffer.readUInt32LE(offset);
         offset = offset + 4;
-        this.pointerToRelocations = buffer.readUInt32LE();
+        this.pointerToRelocations = buffer.readUInt32LE(offset);
         offset = offset + 4;
-        this.pointerToLinenumbers = buffer.readUInt32LE();
+        this.pointerToLinenumbers = buffer.readUInt32LE(offset);
         offset = offset + 4;
 
-        this.numberOfRelocations = buffer.readUInt16LE();
+        this.numberOfRelocations = buffer.readUInt16LE(offset);
         offset = offset + 2;
-        this.numberOfLinenumbers = buffer.readUInt16LE();
+        this.numberOfLinenumbers = buffer.readUInt16LE(offset);
         offset = offset + 2;
-        this.characteristics = buffer.readUInt32LE();
+        this.characteristics = buffer.readUInt32LE(offset);
         offset = offset + 4;
         this.length = offset - this.startOffset;
     }

@@ -28,7 +28,7 @@ function createWindow () {
   mainWindow = new BrowserWindow(Config)
   mainWindow.webContents.openDevTools()
   mainWindow.loadURL(url.format({
-    pathname: "/pub/index.html",
+    pathname: "/dist/index.html",
     protocol: 'file:',
     slashes: true
   }))

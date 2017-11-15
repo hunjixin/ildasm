@@ -1,5 +1,7 @@
 class DelayImportTable {
-  constructor(buffer, offset) {
+  constructor(buffer, pEntity) {
+    if(pEntity.sizeOfDelayImportDescriptor==0)return;
+    var offset=pEntity.delayImportDescriptor;
     this.startOffset = offset;
 
     this.length = offset - this.startOffset;

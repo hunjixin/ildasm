@@ -14,7 +14,7 @@ module.exports = {
     index: './src/index.js'
   },
   output: {
-    path: path.resolve(__dirname, 'pub'),
+    path: path.resolve(__dirname, 'dist'),
     publicPath: '/dist/',
     filename: 'js/[name].js'
   },
@@ -76,7 +76,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
-    contentBase: __dirname + '/pub'
+    contentBase: __dirname + '/dist'
   },
   target: 'electron'
 }

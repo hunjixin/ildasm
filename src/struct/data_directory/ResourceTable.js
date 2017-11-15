@@ -1,18 +1,20 @@
 import {resourceEntry} from './resourceEntry.js';
 class ResourceTable {
-    constructor(buffer, offset) {
+    constructor(reader,buffer, pEntity) {
+        if(pEntity.sizeOfResourceTable==0)return;
+        var offset=  reader.peHeader.optionHeader.RVAToOffset(pEntity.resourceTable,reader.sectionHeaders).foa ;
         this.startOffset = offset;
-        this.charachteristics = buffer.readUInt32LE();
+        this.charachteristics = buffer.readUInt32LE(offset);
         offset = offset + 4;
-        this.timeDateStamp = buffer.readUInt32LE();
+        this.timeDateStamp = buffer.readUInt32LE(offset);
         offset = offset + 4;
-        this.majorVersion = buffer.readUInt16LE();
+        this.majorVersion = buffer.readUInt16LE(offset);
         offset = offset + 2;
-        this.minorVersion = buffer.readUInt16LE();
+        this.minorVersion = buffer.readUInt16LE(offset);
         offset = offset + 2;
-        this.numberOfNameEntries = buffer.readUInt16LE();
+        this.numberOfNameEntries = buffer.readUInt16LE(offset);
         offset = offset + 2;
-        this.numberOfIdEntries = buffer.readUInt16LE();
+        this.numberOfIdEntries = buffer.readUInt16LE(offset);
         offset = offset + 2;
         this.nameEntries = [];
         for (var i = 0; i < this.numberOfNameEntries; i++) {

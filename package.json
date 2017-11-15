@@ -2,9 +2,9 @@
   "name": "ildasm",
   "version": "1.0.0",
   "description": "MSIL VIEW",
-  "main": "pub/js/main.js",
+  "main": "dist/js/main.js",
   "scripts": {
-    "start": "electron --debug-brk=5858 .",
+    "start": "./electron --debug-brk=5858 .",
     "webpack": "webpack --progress --colors"
   },
   "repository": "",
