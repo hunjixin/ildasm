@@ -98,29 +98,16 @@ class OptionalHeader {
 
     }
     RVAToOffset(dwRva, sections) {
-        //区段数  
         var dwSectionCount = this.coffheader.numberOfSections;
-        //内存对齐大小  
-        var dwAlignment = this.sectionAlignment;
-        for (var i = 0; i < dwSectionCount; ++i) {
-            var dwBegin = sections[i].virtualAddress;
-            if (i == 0 && dwRva < dwBegin) {
-                return {
-                    foa: dwRva,
-                    section: 0
-                };
-            }
-            var dwBlockCount = sections[i].sizeOfRawData / dwAlignment;
-            dwBlockCount += sections[i].sizeOfRawData % dwAlignment ? 1 : 0;
-            if (dwRva >= dwBegin && dwRva < dwBegin + dwBlockCount * dwAlignment) {
-                return {
-                    foa: sections[i].pointerToRawData + dwRva - dwBegin,
-                    section: i
-                };
-            }
-        }
+        for (var i = 0; i < dwSectionCount; ++i)  
+        {  
+            if ((dwRva >= sections[i].virtualAddress) && (dwRva <= sections[i].virtualAddress + sections[i].sizeOfRawData))  
+            {  
+                return sections[i].pointerToRawData + (dwRva - sections[i].virtualAddress);  
+            }  
+        }  
+        return -1;  
     }
-
     readDataDirectory(buffer, offset) {
         var virtualAddress;
         var size = buffer;

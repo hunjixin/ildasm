@@ -2,7 +2,7 @@ import {resourceEntry} from './resourceEntry.js';
 class ResourceTable {
     constructor(reader,buffer, pEntity) {
         if(pEntity.sizeOfResourceTable==0)return;
-        var offset=  reader.peHeader.optionHeader.RVAToOffset(pEntity.resourceTable,reader.sectionHeaders).foa ;
+        var offset=  reader.peHeader.optionHeader.RVAToOffset(pEntity.resourceTable,reader.sectionHeaders) ;
         this.startOffset = offset;
         this.charachteristics = buffer.readUInt32LE(offset);
         offset = offset + 4;
@@ -24,9 +24,9 @@ class ResourceTable {
         }
         this.idEntries = [];
         for (var i = 0; i < this.numberOfIdEntries; i++) {
-            var entry = new resourceEntry(buffer, offset);
-            offset = offset + entry.length;
-            this.idEntries.push(entry);
+           // var entry = new resourceEntry(buffer, offset);
+           // offset = offset + entry.length;
+           // this.idEntries.push(entry);
         }
         this.length = offset - this.startOffset;
     }

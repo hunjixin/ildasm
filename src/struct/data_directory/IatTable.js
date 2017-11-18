@@ -1,5 +1,5 @@
 class IatTable {
-  constructor(buffer, pEntity) {
+  constructor(reader,buffer, pEntity) {
     if(pEntity.sizeOfImportAddressTable==0)return;
     var offset=pEntity.importAddressTable;
 

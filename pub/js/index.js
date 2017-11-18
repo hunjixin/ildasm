@@ -36,7 +36,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "c73c7db26beedb2bea0b"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "23adac5206b5904a7893"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -19334,9 +19334,9 @@ var resourceEntry = function resourceEntry(buffer, offset) {
   _classCallCheck(this, resourceEntry);
 
   this.startOffset = offset;
-  this.namedId = buffer.readUInt32LE(offset);
+  this.namedId = buffer.readUInt32LE();
   offset = offset + 4;
-  this.data = buffer.readUInt32LE(offset);
+  this.data = buffer.readUInt32LE();
   offset = offset + 4;
   this.length = offset - this.startOffset;
 
@@ -19364,13 +19364,13 @@ var resourceDataEntry = function resourceDataEntry(buffer, offset) {
   _classCallCheck(this, resourceDataEntry);
 
   this.startOffset = offset;
-  this.data = buffer.readUInt32LE(offset);
+  this.data = buffer.readUInt32LE();
   offset = offset + 4;
-  this.size = buffer.readUInt32LE(offset);
+  this.size = buffer.readUInt32LE();
   offset = offset + 4;
-  this.codePage = buffer.readUInt32LE(offset);
+  this.codePage = buffer.readUInt32LE();
   offset = offset + 4;
-  this.reserved = buffer.readUInt32LE(offset);
+  this.reserved = buffer.readUInt32LE();
   offset = offset + 4;
   this.length = offset - this.startOffset;
 };
@@ -44460,7 +44460,7 @@ var PEReader = function () {
       this.dosHeader = new _DosHeader.DosHeader(buffer);
       this.dosStub = buffer.toString('ascii', this.dosHeader.length, this.dosHeader.e_lfanew); // 64
 
-      this.peHeader = new _PEHeader.PEHeader(buffer, this.dosHeader);
+      this.peHeader = new _PEHeader.PEHeader(buffer, this.dosHeader.e_lfanew);
       this.sectionHeaders = [];
       var offset = this.peHeader.startOffset + this.peHeader.length;
       for (var i = 0; i < this.peHeader.coffHeader.numberOfSections; i++) {
@@ -44469,35 +44469,35 @@ var PEReader = function () {
         offset = offset + section.length;
       }
       // export
-      if (this.peHeader.optionHeader.dataDirectory.exportTable != 0) this.exportTable = new _index.ExportTable(this, buffer, this.peHeader.optionHeader.dataDirectory[0]);
+      if (this.peHeader.optionHeader.dataDirectory.exportTable != 0) this.exportTable = new _index.ExportTable(buffer, this.peHeader.optionHeader.dataDirectory.exportTable);
       // import
-      if (this.peHeader.optionHeader.dataDirectory.importTable != 0) this.importTable = new _index.ImportTable(this, buffer, this.peHeader.optionHeader.dataDirectory[1]);
+      if (this.peHeader.optionHeader.dataDirectory.importTable != 0) this.importTable = new _index.ImportTable(buffer, this.peHeader.optionHeader.dataDirectory.importTable);
       // resource
-      if (this.peHeader.optionHeader.dataDirectory.resourceTable != 0) this.resourceTable = new _index.ResourceTable(this, buffer, this.peHeader.optionHeader.dataDirectory[2]);
+      if (this.peHeader.optionHeader.dataDirectory.resourceTable != 0) this.resourceTable = new _index.ResourceTable(buffer, this.peHeader.optionHeader.dataDirectory.resourceTable);
       // exception
-      if (this.peHeader.optionHeader.dataDirectory.exceptionTable != 0) this.exceptionTable = new _index.ExceptionTable(this, buffer, this.peHeader.optionHeader.dataDirectory[3]);
+      if (this.peHeader.optionHeader.dataDirectory.exceptionTable != 0) this.exceptionTable = new _index.ExceptionTable(buffer, this.peHeader.optionHeader.dataDirectory.exceptionTable);
       // security
-      if (this.peHeader.optionHeader.dataDirectory.certificateTable != 0) this.certificateTable = new _index.SecurityTable(this, buffer, this.peHeader.optionHeader.dataDirectory[4]);
+      if (this.peHeader.optionHeader.dataDirectory.certificateTable != 0) this.certificateTable = new _index.SecurityTable(buffer, this.peHeader.optionHeader.dataDirectory.certificateTable);
       // baserloc
-      if (this.peHeader.optionHeader.dataDirectory.baserloc != 0) this.BaserelocTable = new _index.BaserelocTable(this, buffer, this.peHeader.optionHeader.dataDirectory[5]);
+      if (this.peHeader.optionHeader.dataDirectory.baserloc != 0) this.BaserelocTable = new _index.BaserelocTable(buffer, this.peHeader.optionHeader.dataDirectory.resourceTable);
       // debug
-      if (this.peHeader.optionHeader.dataDirectory.debugTable != 0) this.debugTable = new _index.DebugTable(this, buffer, this.peHeader.optionHeader.dataDirectory[6]);
+      if (this.peHeader.optionHeader.dataDirectory.debugTable != 0) this.debugTable = new _index.DebugTable(buffer, this.peHeader.optionHeader.dataDirectory.debugTable);
       // architecture
-      if (this.peHeader.optionHeader.dataDirectory.architectureData != 0) this.architectureDataTable = new _index.ArchitectureTable(this, buffer, this.peHeader.optionHeader.dataDirectory[7]);
+      if (this.peHeader.optionHeader.dataDirectory.architectureData != 0) this.architectureDataTable = new _index.ArchitectureTable(buffer, this.peHeader.optionHeader.dataDirectory.architectureData);
       // globalptr
-      if (this.peHeader.optionHeader.dataDirectory.globalPtr != 0) this.globalPtr = new _index.GlobalptrTable(this, buffer, this.peHeader.optionHeader.dataDirectory[8]);
+      if (this.peHeader.optionHeader.dataDirectory.globalPtr != 0) this.globalPtr = new _index.GlobalptrTable(buffer, this.peHeader.optionHeader.dataDirectory.globalPtr);
       // tls
-      if (this.peHeader.optionHeader.dataDirectory.TLSTable != 0) this.TLSTable = new _index.TLSTable(this, buffer, this.peHeader.optionHeader.dataDirectory[9]);
+      if (this.peHeader.optionHeader.dataDirectory.TLSTable != 0) this.TLSTable = new _index.TLSTable(buffer, this.peHeader.optionHeader.dataDirectory.TLSTable);
       // load_config
-      if (this.peHeader.optionHeader.dataDirectory.loadConfigTable != 0) this.loadConfigTable = new _index.LoadConfigTable(this, buffer, this.peHeader.optionHeader.dataDirectory[10]);
+      if (this.peHeader.optionHeader.dataDirectory.loadConfigTable != 0) this.loadConfigTable = new _index.LoadConfigTable(buffer, this.peHeader.optionHeader.dataDirectory.loadConfigTable);
       // bound_import
-      if (this.peHeader.optionHeader.dataDirectory.boundImport != 0) this.boundImportTable = new _index.BoundImportTable(this, buffer, this.peHeader.optionHeader.dataDirectory[11]);
+      if (this.peHeader.optionHeader.dataDirectory.boundImport != 0) this.boundImportTable = new _index.BoundImportTable(buffer, this.peHeader.optionHeader.dataDirectory.boundImport);
       // iat
-      if (this.peHeader.optionHeader.dataDirectory.importAddressTable != 0) this.importAddressTable = new _index.IatTable(this, buffer, this.peHeader.optionHeader.dataDirectory[12]);
+      if (this.peHeader.optionHeader.dataDirectory.importAddressTable != 0) this.importAddressTable = new _index.IatTable(buffer, this.peHeader.optionHeader.dataDirectory.importAddressTable);
       // delatimport
-      if (this.peHeader.optionHeader.dataDirectory.delayImportDescriptor != 0) this.delayImportTable = new _index.DelayImportTable(this, buffer, this.peHeader.optionHeader.dataDirectory[13]);
+      if (this.peHeader.optionHeader.dataDirectory.delayImportDescriptor != 0) this.delayImportTable = new _index.DelayImportTable(buffer, this.peHeader.optionHeader.dataDirectory.delayImportDescriptor);
       // comdescriptor
-      if (this.peHeader.optionHeader.dataDirectory.CLRRuntimeHeader != 0) this.CLRRuntimeHeader = new _index.ComDescriptionTable(this, buffer, this.peHeader.optionHeader.dataDirectory[14]);
+      if (this.peHeader.optionHeader.dataDirectory.CLRRuntimeHeader != 0) this.CLRRuntimeHeader = new _index.ComDescriptionTable(buffer, this.peHeader.optionHeader.dataDirectory.CLRRuntimeHeader);
     }
   }]);
 
@@ -44607,10 +44607,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /**
  * peHeader
  */
-var PEHeader = function PEHeader(buffer, dosHeader) {
+var PEHeader = function PEHeader(buffer, offset) {
     _classCallCheck(this, PEHeader);
 
-    var offset = dosHeader.e_lfanew;
     this.startOffset = offset;
 
     this.signature = buffer.readUInt32LE(offset);
@@ -44619,7 +44618,7 @@ var PEHeader = function PEHeader(buffer, dosHeader) {
     this.coffHeader = new _COFFHeader.COFFHeader(buffer, offset);
     offset = offset + this.coffHeader.length;
 
-    this.optionHeader = new _OptionalHeader.OptionalHeader(buffer, offset, this.coffHeader, this.dosHeader);
+    this.optionHeader = new _OptionalHeader.OptionalHeader(buffer, offset, this.coffHeader);
     offset = offset + this.optionHeader.length;
 
     this.length = offset - this.startOffset;
@@ -44702,11 +44701,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * optionalHeader
  */
 var OptionalHeader = function () {
-    function OptionalHeader(buffer, offset, coffheader, dosHeader) {
+    function OptionalHeader(buffer, offset, coffheader) {
         _classCallCheck(this, OptionalHeader);
 
-        this.coffheader = coffheader;
-        this.dosHeader = dosHeader;
         this.startOffset = offset;
         this.signature = buffer.readUInt16LE(offset);
         offset = offset + 2;
@@ -44799,17 +44796,6 @@ var OptionalHeader = function () {
     }
 
     _createClass(OptionalHeader, [{
-        key: "RVAToOffset",
-        value: function RVAToOffset(dwRva, sections) {
-            var dwSectionCount = this.coffheader.numberOfSections;
-            for (var i = 0; i < dwSectionCount; ++i) {
-                if (dwRva >= sections[i].virtualAddress && dwRva <= sections[i].virtualAddress + sections[i].sizeOfRawData) {
-                    return sections[i].pointerToRawData + (dwRva - sections[i].virtualAddress);
-                }
-            }
-            return -1;
-        }
-    }, {
         key: "readDataDirectory",
         value: function readDataDirectory(buffer, offset) {
             var virtualAddress;
@@ -44907,7 +44893,7 @@ var OptionalHeader = function () {
             // CLRRuntimeHeader
             innerReader();
             this.dataDirectory.push({
-                CLRuntimeHeader: virtualAddress,
+                CLRRuntimeHeader: virtualAddress,
                 sizeOfCLRRuntimeHeader: size
             });
             // reserve
@@ -44949,25 +44935,25 @@ var SectionHeader = function SectionHeader(buffer, offset) {
     this.startOffset = offset;
     this.name = buffer.toString('ascii', offset, offset + 8);
     offset = offset + 8;
-    this.misc = buffer.readUInt32LE(offset); // PhysicalAddress;  VirtualSize
+    this.misc = buffer.readUInt32LE(); // PhysicalAddress;  VirtualSize
     offset = offset + 4;
 
-    this.virtualAddress = buffer.readUInt32LE(offset);
+    this.virtualAddress = buffer.readUInt32LE();
     offset = offset + 4;
-    this.sizeOfRawData = buffer.readUInt32LE(offset);
+    this.sizeOfRawData = buffer.readUInt32LE();
     offset = offset + 4;
-    this.pointerToRawData = buffer.readUInt32LE(offset);
+    this.pointerToRawData = buffer.readUInt32LE();
     offset = offset + 4;
-    this.pointerToRelocations = buffer.readUInt32LE(offset);
+    this.pointerToRelocations = buffer.readUInt32LE();
     offset = offset + 4;
-    this.pointerToLinenumbers = buffer.readUInt32LE(offset);
+    this.pointerToLinenumbers = buffer.readUInt32LE();
     offset = offset + 4;
 
-    this.numberOfRelocations = buffer.readUInt16LE(offset);
+    this.numberOfRelocations = buffer.readUInt16LE();
     offset = offset + 2;
-    this.numberOfLinenumbers = buffer.readUInt16LE(offset);
+    this.numberOfLinenumbers = buffer.readUInt16LE();
     offset = offset + 2;
-    this.characteristics = buffer.readUInt32LE(offset);
+    this.characteristics = buffer.readUInt32LE();
     offset = offset + 4;
     this.length = offset - this.startOffset;
 };
@@ -45056,11 +45042,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ArchitectureTable = function ArchitectureTable(reader, buffer, pEntity) {
+var ArchitectureTable = function ArchitectureTable(buffer, offset) {
   _classCallCheck(this, ArchitectureTable);
 
-  if (pEntity.sizeOfArchitectureData == 0) return;
-  var offset = reader.peHeader.optionHeader.RVAToOffset(pEntity.architectureData, reader.sectionHeaders);
   this.startOffset = offset;
 
   this.length = offset - this.startOffset;
@@ -45083,11 +45067,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var BaserelocTable = function BaserelocTable(reader, buffer, pEntity) {
+var BaserelocTable = function BaserelocTable(buffer, offset) {
   _classCallCheck(this, BaserelocTable);
 
-  if (pEntity.sizeOfBaseRelocationTable == 0) return;
-  var offset = pEntity.baseRelocationTable;
   this.startOffset = offset;
 
   this.length = offset - this.startOffset;
@@ -45110,11 +45092,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var BoundImportTable = function BoundImportTable(reader, buffer, pEntity) {
+var BoundImportTable = function BoundImportTable(buffer, offset) {
   _classCallCheck(this, BoundImportTable);
 
-  if (pEntity.sizeOfBoundImport == 0) return;
-  var offset = pEntity.boundImport;
   this.startOffset = offset;
 
   this.length = offset - this.startOffset;
@@ -45137,11 +45117,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ComDescriptionTable = function ComDescriptionTable(reader, buffer, pEntity) {
+var ComDescriptionTable = function ComDescriptionTable(buffer, offset) {
   _classCallCheck(this, ComDescriptionTable);
 
-  if (pEntity.sizeOfCLRRuntimeHeader == 0) return;
-  var offset = pEntity.CLRuntimeHeader;
   this.startOffset = offset;
 
   this.length = offset - this.startOffset;
@@ -45164,11 +45142,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var DebugTable = function DebugTable(reader, buffer, pEntity) {
+var DebugTable = function DebugTable(buffer, offset) {
   _classCallCheck(this, DebugTable);
 
-  if (pEntity.sizeOfDebug == 0) return;
-  var offset = pEntity.debug;
   this.startOffset = offset;
   this.characteristics = buffer.readUInt32LE(offset);
   offset = offset + 4;
@@ -45208,11 +45184,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var DelayImportTable = function DelayImportTable(reader, buffer, pEntity) {
+var DelayImportTable = function DelayImportTable(buffer, offset) {
   _classCallCheck(this, DelayImportTable);
 
-  if (pEntity.sizeOfDelayImportDescriptor == 0) return;
-  var offset = pEntity.delayImportDescriptor;
   this.startOffset = offset;
 
   this.length = offset - this.startOffset;
@@ -45235,11 +45209,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ExceptionTable = function ExceptionTable(reader, buffer, pEntity) {
+var ExceptionTable = function ExceptionTable(buffer, offset) {
   _classCallCheck(this, ExceptionTable);
 
-  if (pEntity.sizeOfExceptionTable == 0) return;
-  var offset = pEntity.exceptionTable;
   this.startOffset = offset;
   this.pData = buffer.readUInt32LE(offset);
   offset = offset + 4;
@@ -45263,11 +45235,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ExportTable = function ExportTable(reader, buffer, pEntity) {
+var ExportTable = function ExportTable(buffer, offset) {
         _classCallCheck(this, ExportTable);
 
-        if (pEntity.sizeOfExportTable == 0) return;
-        var offset = reader.peHeader.optionHeader.RVAToOffset(pEntity.exportTable, reader.sectionHeaders);
         this.startOffset = offset;
         this.characteristics = buffer.readUInt32LE(offset);
         offset = offset + 4;
@@ -45314,11 +45284,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var GlobalptrTable = function GlobalptrTable(reader, buffer, pEntity) {
+var GlobalptrTable = function GlobalptrTable(buffer, offset) {
   _classCallCheck(this, GlobalptrTable);
 
-  if (pEntity.sizeOfGlobalPtr == 0) return;
-  var offset = pEntity.globalPtr;
   this.startOffset = offset;
 
   this.length = offset - this.startOffset;
@@ -45341,11 +45309,8 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var IatTable = function IatTable(reader, buffer, pEntity) {
+var IatTable = function IatTable(buffer, offset) {
   _classCallCheck(this, IatTable);
-
-  if (pEntity.sizeOfImportAddressTable == 0) return;
-  var offset = pEntity.importAddressTable;
 
   this.startOffset = offset;
 
@@ -45395,74 +45360,24 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ImportTable = function () {
-    function ImportTable(reader, buffer, pEntity) {
-        _classCallCheck(this, ImportTable);
-
-        if (pEntity.sizeOfImportTable == 0) return;
-        var offset = reader.peHeader.optionHeader.RVAToOffset(pEntity.importTable, reader.sectionHeaders);
-
-        this.startOffset = offset;
-        //指向IMAGE_THUNK_DATA 数组  int数组
-        //数组每个指向IMAGE_IMPORT_BY_NAME  结构  由此读出函数名称
-        this.originalFirstThunkOrTerninate = buffer.readUInt32LE(offset); // 包含指向IMAGE_DATA（输入名称表）RVA 的结构数组
-        offset = offset + 4;
-        this.timeDateStamp = buffer.readUInt32LE(offset); //当可执行文件不与被导入的DLL进行绑定时，此字段为0
-        offset = offset + 4;
-        this.forwarderChain = buffer.readUInt32LE(offset); //第一个被转向的API索引
-        offset = offset + 4;
-        this.dsadasdsad = buffer.readUInt32LE(offset); //第一个被转向的API索引
-        var xxxx = reader.peHeader.optionHeader.RVAToOffset(this.dsadasdsad, reader.sectionHeaders);
-        this.name = this.ReadName1(buffer, xxxx); // buffer.toString('ascii', xxxx, 8); //指向被导入的DLL 名称
-
-
-        offset = offset + 4;
-        this.firstThunk = buffer.readUInt32LE(offset); //指向输入地址表（IAT）RVA，IAT是一个IMAGE_THUNK_DATA结构的数组
-        offset = offset + 4;
-        //  this.descriptors = [];
-        //  var descriptor = new ImageImportDescriptor(buffer, offset);
-        // this.descriptors.push(descriptor);
-        //  while (descriptor.originalFirstThunkOrTerninate !== 0) {
-        //      offset = reader.peHeader.optionHeader.RVAToOffset(descriptor.originalFirstThunkOrTerninate, reader.sectionHeaders);
-        //      this.descriptors.push(new ImageImportDescriptor(buffer, offset));
-        // }
-        this.length = offset - this.startOffset;
-    }
-
-    _createClass(ImportTable, [{
-        key: "ReadName1",
-        value: function ReadName1(buffer, offset) {
-            var result = "";
-            while (true) {
-                var charCode = buffer.readInt8(offset);
-                offset = offset + 1;
-                if (charCode == 0) return result;
-                result += String.fromCharCode(charCode);
-            }
-        }
-    }]);
-
-    return ImportTable;
-}();
-
-var ImageImportDescriptor = function ImageImportDescriptor(buffer, offset) {
-    _classCallCheck(this, ImageImportDescriptor);
+var ImportTable = function ImportTable(buffer, offset) {
+    _classCallCheck(this, ImportTable);
 
     this.startOffset = offset;
-    this.originalFirstThunkOrTerninate = buffer.readUInt32LE(offset); // 包含指向IMAGE_DATA（输入名称表）RVA 的结构数组
+    this.originalFirstThunk = buffer.readUInt32LE(offset); // ImportByName
     offset = offset + 4;
-    this.timeDateStamp = buffer.readUInt32LE(offset); //当可执行文件不与被导入的DLL进行绑定时，此字段为0
+    this.timeDateStamp = buffer.readUInt32LE(offset);
     offset = offset + 4;
-    this.forwarderChain = buffer.readUInt32LE(offset); //第一个被转向的API索引
+    this.forwarderChain = buffer.readUInt32LE(offset);
     offset = offset + 4;
-    this.name = buffer.toString('ascii', offset, 4); //指向被导入的DLL 名称
+    this.name = buffer.readUInt32LE(offset);
     offset = offset + 4;
-    this.firstThunk = buffer.readUInt32LE(offset); //指向输入地址表（IAT）RVA，IAT是一个IMAGE_THUNK_DATA结构的数组
+
+    this.firstThunk = buffer.readUInt32LE(offset); // ImportByName
     offset = offset + 4;
+    this.length = offset - this.startOffset;
 };
 
 exports.default = ImportTable;
@@ -45482,11 +45397,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var LoadConfigTable = function LoadConfigTable(reader, buffer, pEntity) {
+var LoadConfigTable = function LoadConfigTable(buffer, offset) {
   _classCallCheck(this, LoadConfigTable);
 
-  if (pEntity.sizeOfLoadConfigTable == 0) return;
-  var offset = pEntity.loadConfigTable;
   this.startOffset = offset;
 
   this.length = offset - this.startOffset;
@@ -45511,23 +45424,21 @@ var _resourceEntry = __webpack_require__(214);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ResourceTable = function ResourceTable(reader, buffer, pEntity) {
+var ResourceTable = function ResourceTable(buffer, offset) {
     _classCallCheck(this, ResourceTable);
 
-    if (pEntity.sizeOfResourceTable == 0) return;
-    var offset = reader.peHeader.optionHeader.RVAToOffset(pEntity.resourceTable, reader.sectionHeaders);
     this.startOffset = offset;
-    this.charachteristics = buffer.readUInt32LE(offset);
+    this.charachteristics = buffer.readUInt32LE();
     offset = offset + 4;
-    this.timeDateStamp = buffer.readUInt32LE(offset);
+    this.timeDateStamp = buffer.readUInt32LE();
     offset = offset + 4;
-    this.majorVersion = buffer.readUInt16LE(offset);
+    this.majorVersion = buffer.readUInt16LE();
     offset = offset + 2;
-    this.minorVersion = buffer.readUInt16LE(offset);
+    this.minorVersion = buffer.readUInt16LE();
     offset = offset + 2;
-    this.numberOfNameEntries = buffer.readUInt16LE(offset);
+    this.numberOfNameEntries = buffer.readUInt16LE();
     offset = offset + 2;
-    this.numberOfIdEntries = buffer.readUInt16LE(offset);
+    this.numberOfIdEntries = buffer.readUInt16LE();
     offset = offset + 2;
     this.nameEntries = [];
     for (var i = 0; i < this.numberOfNameEntries; i++) {
@@ -45537,9 +45448,9 @@ var ResourceTable = function ResourceTable(reader, buffer, pEntity) {
     }
     this.idEntries = [];
     for (var i = 0; i < this.numberOfIdEntries; i++) {
-        // var entry = new resourceEntry(buffer, offset);
-        // offset = offset + entry.length;
-        // this.idEntries.push(entry);
+        var entry = new _resourceEntry.resourceEntry(buffer, offset);
+        offset = offset + entry.length;
+        this.idEntries.push(entry);
     }
     this.length = offset - this.startOffset;
 };
@@ -45561,11 +45472,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var SecurityTable = function SecurityTable(reader, buffer, pEntity) {
+var SecurityTable = function SecurityTable(buffer, offset) {
   _classCallCheck(this, SecurityTable);
 
-  if (pEntity.sizeOfCertificateTable == 0) return;
-  var offset = pEntity.certificateTable;
   this.startOffset = offset;
 
   this.length = offset - this.startOffset;
@@ -45588,11 +45497,9 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var TLSTable = function TLSTable(reader, buffer, pEntity) {
+var TLSTable = function TLSTable(buffer, offset) {
   _classCallCheck(this, TLSTable);
 
-  if (pEntity.sizeOfTLSTable == 0) return;
-  var offset = pEntity.TLSTable;
   this.startOffset = offset;
 
   this.length = offset - this.startOffset;

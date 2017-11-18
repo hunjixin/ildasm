@@ -1,5 +1,5 @@
 class DebugTable {
-  constructor(buffer, pEntity) {
+  constructor(reader,buffer, pEntity) {
     if(pEntity.sizeOfDebug==0)return;
     var offset=pEntity.debug;
     this.startOffset = offset;

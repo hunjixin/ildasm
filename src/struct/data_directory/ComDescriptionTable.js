@@ -1,5 +1,5 @@
 class ComDescriptionTable {
-  constructor(buffer, pEntity) {
+  constructor(reader,buffer, pEntity) {
     if(pEntity.sizeOfCLRRuntimeHeader==0)return;
     var offset=pEntity.CLRuntimeHeader;
     this.startOffset = offset;

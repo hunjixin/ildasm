@@ -1,5 +1,5 @@
 class GlobalptrTable {
-  constructor(buffer, pEntity) {
+  constructor(reader,buffer, pEntity) {
     if(pEntity.sizeOfGlobalPtr==0)return;
     var offset=pEntity.globalPtr;
     this.startOffset = offset;

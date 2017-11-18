@@ -1,5 +1,5 @@
 class ExceptionTable {
-  constructor(buffer, pEntity) {
+  constructor(reader,buffer, pEntity) {
     if(pEntity.sizeOfExceptionTable==0)return;
     var offset=pEntity.exceptionTable;
     this.startOffset = offset;

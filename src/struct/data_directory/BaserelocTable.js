@@ -1,5 +1,5 @@
 class BaserelocTable {
-  constructor(buffer, pEntity) {
+  constructor(reader,buffer, pEntity) {
     if(pEntity.sizeOfBaseRelocationTable==0)return;
     var offset=pEntity.baseRelocationTable;
     this.startOffset = offset

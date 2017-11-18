@@ -36,7 +36,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "c73c7db26beedb2bea0b"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "23adac5206b5904a7893"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -734,7 +734,7 @@ function createWindow() {
   mainWindow = new _electron.BrowserWindow(_config2.default);
   mainWindow.webContents.openDevTools();
   mainWindow.loadURL(_url2.default.format({
-    pathname: "/dist/index.html",
+    pathname: "/pub/index.html",
     protocol: 'file:',
     slashes: true
   }));
